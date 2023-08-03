@@ -154,6 +154,7 @@ More to note:
 - More conditions keywords:
     - Check if a variable is defined: `ifdef VAR`
     - Check if a variable is empty: `ifeq ($(strip $(VAR)),)`
+      
 _(`strip` is to remove leading and trailing whitespace from the value of the `VAR` variable)_
 ```make
 DEBUG ?= 1
