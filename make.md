@@ -96,7 +96,7 @@ We can use patterns to do the same tasks for several source files once at a time
 - `$<`: the name of the first ependency
 - `$^`: the names of all prerequisites
 
-Below code will scan all `.cc` source files and compile them due to the patterns defined at the end of the code, `wildcard` function in line 119 and `patsubst` in line 120
+Below code will scan all `.cc` source files and compile them due to the patterns defined at the end of the code, `wildcard` function and `patsubst` function
 - `wildcard` - function to scan all `.cc` files
 - `patsubst` - function to create `%.o` corresponding to `%.cc` in the `$(CXX_SOURCES)` directory
 ```make
@@ -146,10 +146,19 @@ clean:
 - Add variables to define warning options: `ENABLE_WARNINGS`, `WARNINGS_AS_ERRORS`
 - Add `.PHONY` target (predefined) to tell make tool that which targets are not file names
 
+More to note:
+- Add `?=` to variables that user can set. If it ins't set yet, it will be the default value.
+- Add `@` before any command so that it won't be printed on the terminal.
+- Define `all` target to point to multiple target.
+- `cd build && mkdir test` will work but if you write them seperately in two lines it won't work since each command is run in an own shell.
+- More conditions keywords:
+    - Check if a variable is empty: `ifeq ($(strip $(VAR)),)`
+    - Check if a variable is defined: `ifdef VAR`
+
 ```make
-DEBUG = 1
-ENABLE_WARNINGS = 1
-WARNINGS_AS_ERRORS = 0
+DEBUG ?= 1
+ENABLE_WARNINGS ?= 1
+WARNINGS_AS_ERRORS ?= 0
 
 INCLUDE_DIR = include
 SOURCE_DIR = src
@@ -186,8 +195,10 @@ CXX_OBJECTS = $(patsubst $(SOURCE_DIR)/%.cc, $(BUILD_DIR)/%.o, $(CXX_SOURCES))
 ##############
 ## TARGETS  ##
 ##############
+all: create build
+
 create:
-	mkdir build
+	@mkdir build
 
 build: create $(CXX_OBJECTS)
 	$(CXX_COMPILER_CALL) $(CXX_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)
