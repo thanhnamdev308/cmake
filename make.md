@@ -96,7 +96,9 @@ We can use patterns to do the same tasks for several source files once at a time
 - `$<`: the name of the first ependency
 - `$^`: the names of all prerequisites
 
-Below code will scan all `.cc` source files and compile them due to the patterns defined at the end of the code.
+Below code will scan all `.cc` source files and compile them due to the patterns defined at the end of the code, `wildcard` function in line 119 and `patsubst` in line 120
+- `wildcard` - function to scan all `.cc` files
+- `patsubst` - function to create `%.o` corresponding to `%.cc` in the `$(CXX_SOURCES)` directory
 ```make
 DEBUG = 1
 
