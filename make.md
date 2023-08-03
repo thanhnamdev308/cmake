@@ -152,9 +152,9 @@ More to note:
 - Define `all` target to point to multiple target.
 - `cd build && mkdir test` will work but if you write them seperately in two lines it won't work since each command is run in an own shell.
 - More conditions keywords:
-    - Check if a variable is empty: `ifeq ($(strip $(VAR)),)` _(`strip` is to remove leading and trailing whitespace from the value of the `VAR` variable)_
     - Check if a variable is defined: `ifdef VAR`
-
+    - Check if a variable is empty: `ifeq ($(strip $(VAR)),)`
+_(`strip` is to remove leading and trailing whitespace from the value of the `VAR` variable)_
 ```make
 DEBUG ?= 1
 ENABLE_WARNINGS ?= 1
