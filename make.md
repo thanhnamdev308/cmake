@@ -10,7 +10,7 @@ sudo apt install make
 ```make
 # Makefile
 ###############
-## SYNTAX   ##
+## TARGET   ##
 ###############
 # target: prerequisites
 #	commands
@@ -65,8 +65,10 @@ LDFLAGS =
 
 ifeq ($(DEBUG), True)
 CXXFLAGS += -g -O0
+EXECUTABLE_NAME = mainDebug
 else
 CXXFLAGS += -O3
+EXECUTABLE_NAME = mainRelease
 endif
 
 COMPILER_CALL = $(CXX) $(CXXFLAGS)
@@ -81,10 +83,58 @@ my_lib.o:
 	$(COMPILER_CALL) my_lib.cc -c
 
 execute:
-	./main
+	./$(EXECUTABLE_NAME)
 
 clean:
 	rm -f *.o
-	rm -f main
+	rm -f $(EXECUTABLE_NAME)
 ```
 
+# Patterns
+We can use patterns to do the same tasks for several source files once at a time:
+- `$@`: the file name of the target
+- `$<`: the name of the first ependency
+- `$^`: the names of all prerequisites
+
+Below code will scan all `.cc` source files and compile them due to the patterns defined at the end of the code.
+```make
+DEBUG = True
+
+CXX_STANDARD = c++17
+CXX_WARNINGS = -Wall -Wextra -Wpedantic
+CXX = g++
+CXXFLAGS = $(CXX_WARNINGS) -std=$(CXX_STANDARD)
+LDFLAGS =
+
+ifeq ($(DEBUG), True)
+CXXFLAGS += -g -O0
+EXECUTABLE_NAME = mainDebug
+else
+CXXFLAGS += -O3
+EXECUTABLE_NAME = mainRelease
+endif
+
+CXX_COMPILER_CALL = $(CXX) $(CXXFLAGS)
+
+CXX_SOURCES = $(wildcard *.cc)
+CXX_OBJECTS = $(patsubst %.cc, %.o, $(CXX_SOURCES))
+
+##############
+## TARGETS  ##
+##############
+build: $(CXX_OBJECTS)
+	$(CXX_COMPILER_CALL) $(CXX_OBJECTS) $(LDFLAGS) -o $(EXECUTABLE_NAME)
+
+execute:
+	./$(EXECUTABLE_NAME)
+
+clean:
+	rm -f *.o
+	rm -f $(EXECUTABLE_NAME)
+
+##############
+## PATTERNS ##
+##############
+%.o: %.cc
+	$(CXX_COMPILER_CALL) -c $< -o $@
+```
